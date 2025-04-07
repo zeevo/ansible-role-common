@@ -1,3 +1,13 @@
+- name: Create common group
+  group:
+    name: "{{ common_group }}"
+    state: present
+
+- name: Create container user
+  user:
+    name: "{{ common_user }}"
+    group: "{{ common_group }}"
+
 - name: Create files
   file:
     path: "{{ item.path }}"
@@ -6,6 +16,7 @@
     group: "{{ item.group }}"
   loop: "{{ common_files }}"
   become: true
+  become_user: "{{ common_user }}"
 
 - name: Copy files
   copy:
@@ -17,3 +28,12 @@
     force: "{{ item.force | default(true) }}"
   loop: "{{ common_copy }}"
   become: true
+  become_user: "{{ common_user }}"
+
+- name: Run shell commands
+  shell:
+    cmd: "{{ item.cmd }}"
+    chdir: "{{ item.chdir }}"
+  loop: "{{ common_shell }}"
+  become: true
+  become_user: "{{ common_user }}"
