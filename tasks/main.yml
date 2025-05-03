@@ -1,39 +1,35 @@
-- name: Create common group
-  group:
-    name: "{{ common_group }}"
-    state: present
-
-- name: Create container user
+- name: Create users
   user:
-    name: "{{ common_user }}"
-    group: "{{ common_group }}"
+    name: "{{ item.name }}"
+    state: "{{ item.state }}"
+  loop: "{{ common_users }}"
+
+- name: Create groups
+  group:
+    name: "{{ item.name }}"
+    state: "{{ item.state }}"
+  loop: "{{ common_groups }}"
 
 - name: Create files
   file:
     path: "{{ item.path }}"
     state: "{{ item.state }}"
-    owner: "{{ item.user }}"
-    group: "{{ item.group }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group | default(None) }}"
   loop: "{{ common_files }}"
-  become: true
-  become_user: "{{ common_user }}"
 
 - name: Copy files
   copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    owner: "{{ item.user }}"
+    owner: "{{ item.owner }}"
     group: "{{ item.group | default(None) }}"
     mode: "{{ item.mode | default(None) }}"
     force: "{{ item.force | default(true) }}"
   loop: "{{ common_copy }}"
-  become: true
-  become_user: "{{ common_user }}"
 
 - name: Run shell commands
   shell:
     cmd: "{{ item.cmd }}"
     chdir: "{{ item.chdir }}"
   loop: "{{ common_shell }}"
-  become: true
-  become_user: "{{ common_user }}"
