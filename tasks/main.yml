@@ -16,7 +16,7 @@
     state: "{{ item.state }}"
     owner: "{{ item.owner }}"
     group: "{{ item.group | default(None) }}"
-  loop: "{{ common_files }}"
+  loop: "{{ common_file }}"
 
 - name: Copy files
   copy:

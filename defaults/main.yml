@@ -1,5 +1,5 @@
 common_users: []
 common_groups: []
-common_files: []
+common_file: []
 common_copy: []
 common_shell: []
